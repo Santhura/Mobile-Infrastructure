@@ -20,3 +20,7 @@
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 /Backend/nbproject/private/
+/Restservices/nbproject/private/
+/Restservices/dist/
+/RESTFullDataBase/nbproject/private/
+/RESTFullDataBase/dist/
