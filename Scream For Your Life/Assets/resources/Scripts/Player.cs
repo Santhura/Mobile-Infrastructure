@@ -1,57 +1,102 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
-    public string url = "http://localhost:8080/RESTFullDataBase/webresources/com.screamforyourlife.data";
+    public string url = "http://localhost:8080/RESTFullDataBase/webresources/com.screamforyourlife.data"; //backend url
 
-    int id = 7, highscore = 34,  decibel = 78;
-    string username = "Jan";
-	// Use this for initialization
-    void Awake()
+
+    // data that is used for the xml code for the backend
+    private const string data = "data",
+                        userId = "id",
+                        highScore = "highscore",
+                        username = "username",
+                        decibel = "decibel";
+   
+
+
+   public int playerId = 7, playerHighscore = 0,  decibelNumber = 0;
+   public string playerName = "Jan";
+
+   public Text inputField;
+
+   
+// Use this for initialization
+    void Start ()
     {
-        
-        
+      /*  StartCoroutine(RequestAllScores());
+
+        StartCoroutine(PostScore());
+
+        StartCoroutine(RequestAllScores());*/
+    }
+    void FixedUpdate()
+    {
+        Debug.Log(playerId);
     }
 
-	void Start () {
 
-        WWWForm form = new WWWForm();
-        form.AddField("id", id);
-        form.AddField("username", username);
-        form.AddField("highscore", highscore);
-        form.AddField("decibel", decibel);
-
-
-        WWW www = new WWW(url, form);
-
-        StartCoroutine(Get());
-        StartCoroutine(WaitForRequest(www));
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-    IEnumerator Get()
+    /// <summary>
+    /// get the user name that is entered
+    /// </summary>
+    public void Username()
     {
-        WWW www = new WWW(url);
-        yield return www;
-        Debug.Log(www.text);
+        this.playerName = inputField.text;
+        Debug.Log(this.playerName);
     }
 
-    IEnumerator WaitForRequest(WWW www)
+    /// <summary>
+    /// save the users name and give it a id to this user
+    /// </summary>
+    public void StartButton()
     {
-        yield return www;
+        
+        if (PlayerPrefs.HasKey("playerid"))
+        {
+            playerId = PlayerPrefs.GetInt("playerid");
+            Debug.Log(playerId);
+        }
+        playerId += 1;
+       
+        PlayerPrefs.SetInt("playerid", playerId);
+        StartCoroutine(PostScore());
+    }
 
-        if (www.error == null)
-        {
-            Debug.Log("WWW ok: " + www.data);
-        }
-        else
-        {
-            Debug.Log("WWW error: " + www.error);
-        }
+    /// <summary>
+    /// get all the data from the backend
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator RequestAllScores()
+    {
+        WWW request = new WWW(url);
+        yield return request;
+        Debug.Log(request.text);
+    }
+
+    /// <summary>
+    /// Post data from a player on the backend
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator PostScore()
+    {
+        string xmlString = "<" + data + "><" + decibel + ">" + decibelNumber + "</" + decibel +
+                "><" + highScore + ">" + playerHighscore + "</" + highScore + "><" + userId + 
+                ">" + playerId + "</" + userId + "><" + username + ">" + playerName + "</" + username + "></" + data + ">";
+
+        byte[] xmlBytes = System.Text.Encoding.UTF8.GetBytes(xmlString);
+
+        Dictionary<string, string> postHeader = new Dictionary<string, string>();
+
+        postHeader.Add("Content-Type", "application/xml");
+        postHeader.Add("Content-Length", xmlBytes.Length.ToString());
+       
+        WWW request = new WWW(url, xmlBytes, postHeader);
+
+        yield return request;
+        Debug.Log(request.text);
     }
 }
+
+//ID, get all scores (count), count+1. Insert at the end of the row.
