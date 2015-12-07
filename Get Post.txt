@@ -1,0 +1,38 @@
+public class ScoreManager : MonoBehaviour
+{
+
+// Use this for initialization
+void Start ()
+    {
+        StartCoroutine(RequestAllScores());
+
+        StartCoroutine(PostScore());
+
+        StartCoroutine(RequestAllScores());
+    }
+
+    IEnumerator RequestAllScores()
+    {
+        WWW request = new WWW("http://localhost:8080/Kompas/webresources/kompas.nl.highscores");
+        yield return request;
+        Debug.Log(request.text);
+    }
+
+    IEnumerator PostScore()
+    {
+        string xmlString = "<highscores><highscore>1059</highscore><latitude>2.1</latitude><longitude>2.9</longitude><user>Pietema</user></highscores>";
+        byte[] xmlBytes = System.Text.Encoding.UTF8.GetBytes(xmlString);
+
+        Dictionary<string, string> postHeader = new Dictionary<string, string>();
+
+        postHeader.Add("Content-Type", "application/xml");
+        postHeader.Add("Content-Length", xmlBytes.Length.ToString());
+
+        WWW request = new WWW("http://localhost:8080/Kompas/webresources/kompas.nl.highscores", xmlBytes, postHeader);
+
+        yield return request;
+        Debug.Log(request.text);
+    }
+}
+
+//ID, get all scores (count), count+1. Insert at the end of the row.
