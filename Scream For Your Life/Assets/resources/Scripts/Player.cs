@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
+    #region backend variable
+    [Header("Backend variable")]
     public string url = "http://localhost:8080/RESTFullDataBase/webresources/com.screamforyourlife.data"; //backend url
 
 
@@ -21,20 +23,23 @@ public class Player : MonoBehaviour {
    public string playerName = "Jan";
 
    public Text inputField;
+    #endregion
 
-   
-// Use this for initialization
+    [Header("Player variable")]
+    public float speed = 10;
+    private Rigidbody2D _rb;
+    public AudioSource audioSource;
+
+    // Use this for initialization
     void Start ()
     {
-      /*  StartCoroutine(RequestAllScores());
-
-        StartCoroutine(PostScore());
-
-        StartCoroutine(RequestAllScores());*/
+        _rb = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
     }
     void FixedUpdate()
     {
-        Debug.Log(playerId);
+        _rb.AddForce(new Vector2(Input.acceleration.x * speed, Input.acceleration.y * speed));
+       // transform.Translate(Input.acceleration.x, Input.acceleration.y, 0);
     }
 
 
@@ -47,6 +52,7 @@ public class Player : MonoBehaviour {
         Debug.Log(this.playerName);
     }
 
+    #region backend request
     /// <summary>
     /// save the users name and give it a id to this user
     /// </summary>
@@ -97,6 +103,7 @@ public class Player : MonoBehaviour {
         yield return request;
         Debug.Log(request.text);
     }
+    #endregion
 }
 
 //ID, get all scores (count), count+1. Insert at the end of the row.
