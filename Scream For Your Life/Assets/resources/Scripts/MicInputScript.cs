@@ -8,25 +8,24 @@ public class MicInputScript : MonoBehaviour
 
     private AudioSource audio;              //AudioSource to listen to
     private float posY;                     //Get current y pos and max y pos
-    public float maxPosY;
+    public float maxPosY;                   //Get the max Y pos recorded in-game (highscore)
     private float[] samples;                //Float array to collect audio samples
     private List<float> dbValues;           //Float list to store decibel values
     private const int SAMPLECOUNT = 1024;   //Sample Count
     private const int FREQUENCY = 48000;    //Frequency (Hz)
     private bool isPlaying;                 //Check if mic is listening
-    private const float REFVALUE = 0.02f;   // RMS value for 0 dB.
-    private float dbValue;                   //One decibel value
-    public float maxDbValue;
-    private float rmsValue;                 // Volume in RMS
+    private const float REFVALUE = 0.02f;   //RMS value for 0 dB.
+    private float dbValue;                  //One decibel value
+    public float maxDbValue;                //Get max decibel value recorded in-game
+    private float rmsValue;                 //Volume in RMS
     public Text resultDisplay;              //TextView for displaying amount of decibel
     public Text blowDisplay;                //TextView for displaying whether the user is blowing or not
     public Text highScoreTxt;               //TextView for displaying the highscore (at gameOver)
     public Text maxDecibelTxt;              //TextView for displaying the max decibel value (at gameOver)
     public GameObject gameOverPanel;        //Panel for when you are game over
-    private bool gameOver;
-    public Text inputField;
-
-    public float forcePower = 500;
+    private bool gameOver;                  //Boolean which checks if the player is gameover or not
+    public float forcePower = 500;          //Force power to make the sphere move (when blowing)
+    private float camera2DMinY;             //Lowest y position of the camera
 
     // Use this for initialization
     void Start()
@@ -47,6 +46,7 @@ public class MicInputScript : MonoBehaviour
             //Game playing
             GetDecibel();
             GetMaxData();
+            CheckGameOver();
         }
         else
         {
@@ -86,7 +86,7 @@ public class MicInputScript : MonoBehaviour
         }
 
         //Set text to display the decibel amount
-        resultDisplay.text = "Decibel amount = " + dbValue.ToString("F1") + " dB";
+        //resultDisplay.text = "Decibel amount = " + dbValue.ToString("F1") + " dB";
 
         //Blow up/Shrink balloon (sphere in editor)
         if (dbValue > 0)
@@ -124,16 +124,21 @@ public class MicInputScript : MonoBehaviour
             maxPosY = posY;
         }
 
-        //Display highest y position
-        blowDisplay.text = "HighScore = " + (int)maxPosY;
-
         //Get the highest decibel value
-        if(dbValue > maxDbValue)
+        if (dbValue > maxDbValue)
         {
             maxDbValue = dbValue;
         }
 
-        if(maxPosY > 30)
+        //Display highest y position
+        blowDisplay.text = "HighScore = " + (int)maxPosY;
+    }
+
+    void CheckGameOver()
+    {
+        camera2DMinY = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera2D>()._minY;
+
+        if (posY < camera2DMinY && camera2DMinY > 0)
         {
             gameOver = true;
         }

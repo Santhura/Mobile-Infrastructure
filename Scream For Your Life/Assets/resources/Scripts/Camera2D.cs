@@ -9,6 +9,7 @@ public class Camera2D : MonoBehaviour {
 
 	public BoxCollider2D bounds;
 	private Vector3 _min, _max;
+    public float _minY;
 
 	public bool isFollowing { get; set;} 
 
@@ -33,6 +34,7 @@ public class Camera2D : MonoBehaviour {
             {
                 if ((y - player.position.y) > margin.y)
                     y = Mathf.Lerp(y, player.position.y, smoothing.y * Time.deltaTime);
+                    _minY = bounds.bounds.min.y; //minimum y of the level
             }
 		}
 

@@ -22,7 +22,6 @@ public class XMLParsing : MonoBehaviour
 
         // get text
         _xml = www.text;
-        Debug.Log("Hoi");
 
         // having XML here. Do with it whatever you want...
         XmlDocument doc = new XmlDocument();
