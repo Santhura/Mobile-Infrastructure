@@ -59,4 +59,9 @@ public class XMLParsing : MonoBehaviour
             UI_Text_Name.text = arrayNames[i];
         }
     }
+
+    public void BackToMenu()
+    {
+        Application.LoadLevel("startscene");
+    }
 }
