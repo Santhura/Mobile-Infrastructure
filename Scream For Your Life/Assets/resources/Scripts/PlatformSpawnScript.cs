@@ -43,7 +43,7 @@ public class PlatformSpawnScript : MonoBehaviour {
                 canSpawn = false;
             }
         }
-        Debug.Log("player pos: " + playerPos.position.y + "\nplayer old pos: " + playerOldPos.y);
+        //Debug.Log("player pos: " + playerPos.position.y + "\nplayer old pos: " + playerOldPos.y);
 
 	}
 }

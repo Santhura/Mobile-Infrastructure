@@ -7,22 +7,33 @@ public class MicInputScript : MonoBehaviour
 {
 
     private AudioSource audio;              //AudioSource to listen to
+    private float posY;                     //Get current y pos and max y pos
+    public float maxPosY;
     private float[] samples;                //Float array to collect audio samples
     private List<float> dbValues;           //Float list to store decibel values
     private const int SAMPLECOUNT = 1024;   //Sample Count
     private const int FREQUENCY = 48000;    //Frequency (Hz)
     private bool isPlaying;                 //Check if mic is listening
     private const float REFVALUE = 0.02f;   // RMS value for 0 dB.
-    private float dbValue;                  //One decibel value
+    private float dbValue;                   //One decibel value
+    public float maxDbValue;
     private float rmsValue;                 // Volume in RMS
     public Text resultDisplay;              //TextView for displaying amount of decibel
     public Text blowDisplay;                //TextView for displaying whether the user is blowing or not
+    public Text highScoreTxt;               //TextView for displaying the highscore (at gameOver)
+    public Text maxDecibelTxt;              //TextView for displaying the max decibel value (at gameOver)
+    public GameObject gameOverPanel;        //Panel for when you are game over
+    private bool gameOver;
+    public Text inputField;
 
     public float forcePower = 500;
 
     // Use this for initialization
     void Start()
     {
+        gameOver = false;
+        maxPosY = 0;
+        maxDbValue = 0;
         samples = new float[SAMPLECOUNT];
         audio = GetComponent<AudioSource>();
         StartMicListener();
@@ -31,8 +42,21 @@ public class MicInputScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetDecibel();
-    }
+        if (!gameOver)
+        {
+            //Game playing
+            GetDecibel();
+            GetMaxData();
+        }
+        else
+        {
+            //Game over
+            gameOverPanel.SetActive(true);
+            highScoreTxt.text = "HighScore = " + (int)maxPosY;
+            maxDecibelTxt.text = "Loudest scream = " + (int)maxDbValue + " dB";
+        }
+
+}
 
     void GetDecibel()
     {
@@ -67,13 +91,8 @@ public class MicInputScript : MonoBehaviour
         //Blow up/Shrink balloon (sphere in editor)
         if (dbValue > 0)
         {
-            blowDisplay.text = "Blowing";
+            //blowDisplay.text = "Blowing";
             GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody2D>().AddForce(Vector2.up * forcePower);
-        }
-        else
-        {
-            blowDisplay.text = "Not blowing";
-           // GameObject.FindGameObjectWithTag("Player").transform.localScale *= 0.999f;
         }
     }
 
@@ -93,5 +112,30 @@ public class MicInputScript : MonoBehaviour
         while (!(Microphone.GetPosition("Built-in-Microphone") > 0)) { } // Wait until the recording has started
         audio.Play(); // Play the audio source!
         isPlaying = true;
+    }
+
+    void GetMaxData()
+    {
+        //Get the highest y position
+        posY = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>().position.y;
+
+        if (posY > maxPosY)
+        {
+            maxPosY = posY;
         }
+
+        //Display highest y position
+        blowDisplay.text = "HighScore = " + (int)maxPosY;
+
+        //Get the highest decibel value
+        if(dbValue > maxDbValue)
+        {
+            maxDbValue = dbValue;
+        }
+
+        if(maxPosY > 30)
+        {
+            gameOver = true;
+        }
+    }
 }
