@@ -32,7 +32,6 @@ public class ButtonScript : MonoBehaviour
         
         if(playerName == "")
         {
-            Debug.Log("Ik ben leeg");
         }
         else if(playerName != "")
         {
@@ -45,6 +44,10 @@ public class ButtonScript : MonoBehaviour
 
             PlayerPrefs.SetInt("playerid", playerId);
             StartCoroutine(PostScore(maxDbValue, maxPosY, playerId, playerName));
+
+            //Go back to start menu
+            Level = "startscene";
+            LoadLevel();
         }
     }
 
@@ -54,9 +57,10 @@ public class ButtonScript : MonoBehaviour
     /// <returns></returns>
     IEnumerator PostScore(int maxDbValue, int maxPosY, int playerId, string playerName)
     {
+        //Make the xmlString; Also EscapeUrl to make sure the input is url-friendly
         string xmlString = "<" + data + "><" + decibel + ">" + maxDbValue + "</" + decibel +
                 "><" + highScore + ">" + maxPosY + "</" + highScore + "><" + userId +
-                ">" + playerId + "</" + userId + "><" + username + ">" + playerName + "</" + username + "></" + data + ">";
+                ">" + playerId + "</" + userId + "><" + username + ">" + WWW.EscapeURL(playerName) + "</" + username + "></" + data + ">";
 
         byte[] xmlBytes = System.Text.Encoding.UTF8.GetBytes(xmlString);
 
