@@ -29,8 +29,11 @@ public class Camera2D : MonoBehaviour {
 			if(Mathf.Abs(x - player.position.x) > margin.x)
 				x = Mathf.Lerp(x, player.position.x, smoothing.x * Time.deltaTime);
 
-			if(Mathf.Abs(y - player.position.y) > margin.y)
-				y = Mathf.Lerp(y,player.position.y, smoothing.y * Time.deltaTime);
+            if (player.GetComponent<Rigidbody2D>().velocity.y > 0)
+            {
+                if ((y - player.position.y) > margin.y)
+                    y = Mathf.Lerp(y, player.position.y, smoothing.y * Time.deltaTime);
+            }
 		}
 
 		var cameraHalfWidth = GetComponent<Camera>().orthographicSize * ((float)Screen.width / Screen.height); // calculate the half width of the main camera screen
