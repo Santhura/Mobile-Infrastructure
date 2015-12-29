@@ -33,6 +33,7 @@ public class HighscoreScript : MonoBehaviour {
     IEnumerator RequestAllHighScores()
     {
         WWW request = new WWW(url);
+        Debug.Log(request);
         yield return request;
     }
 }
