@@ -58,7 +58,7 @@ public class Player : MonoBehaviour {
     /// </summary>
     public void StartButton()
     {
-        
+        Username();
         if (PlayerPrefs.HasKey("playerid"))
         {
             playerId = PlayerPrefs.GetInt("playerid");
@@ -70,6 +70,11 @@ public class Player : MonoBehaviour {
         StartCoroutine(PostScore());
     }
 
+    public void getRequest()
+    {
+        StartCoroutine(RequestAllScores());
+    }
+
     /// <summary>
     /// get all the data from the backend
     /// </summary>
@@ -78,7 +83,7 @@ public class Player : MonoBehaviour {
     {
         WWW request = new WWW(url);
         yield return request;
-        Debug.Log(request.text);
+        Debug.Log(request.bytes);
     }
 
     /// <summary>
