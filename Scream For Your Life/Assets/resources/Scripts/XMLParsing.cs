@@ -12,20 +12,24 @@ public class XMLParsing : MonoBehaviour
     public Text UI_Text;
     IEnumerator Start()
     {
+        //List for highscores and playernames
         arrayData = new List<string>();
         arrayNames = new List<string>();
-        // Start a download of the given URL
+
+        //Start a download of the given URL
         WWW www = new WWW(_url);
 
-        // Wait for download to complete
+        //Wait for download to complete
         yield return www;
 
-        // get text
+        //Get text
         _xml = www.text;
 
-        // having XML here. Do with it whatever you want...
+        //Having XML here
         XmlDocument doc = new XmlDocument();
         doc.LoadXml(_xml);
+
+        //Get highscore and playername from each node in XML
         foreach (XmlNode node in doc.DocumentElement.ChildNodes)
         {
             text = node.SelectSingleNode("highscore").InnerText;
@@ -36,12 +40,15 @@ public class XMLParsing : MonoBehaviour
             
         }
 
+        //Sort arrays (highest score first)
         arrayData.Reverse();
         arrayData.RemoveAt(0);
         arrayData.RemoveAt(0);
         arrayNames.Reverse();
         arrayNames.RemoveAt(0);
         arrayNames.RemoveAt(0);
+
+        //Display arrays in highscore list
         for (int i = 0; i < arrayData.Count; i++)
         {
             Text UI_Text = Instantiate(Resources.Load("Prefabs/UI_Text",typeof (Text))) as Text;
@@ -60,6 +67,7 @@ public class XMLParsing : MonoBehaviour
         }
     }
 
+    //Go back to the start screen
     public void BackToMenu()
     {
         Application.LoadLevel("startscene");

@@ -25,7 +25,7 @@ public class MicInputScript : MonoBehaviour
     public GameObject gameOverPanel;        //Panel for when you are game over
     private bool gameOver;                  //Boolean which checks if the player is gameover or not
     public float forcePower = 500;          //Force power to make the sphere move (when blowing)
-    private float camera2DMinY;             //Lowest y position of the camera
+    private float camera2DMinY, camera2DMaxY;             //Lowest/highest y position of the camera
 
     // Use this for initialization
     void Start()
@@ -51,6 +51,7 @@ public class MicInputScript : MonoBehaviour
         else
         {
             //Game over
+            Time.timeScale = 0;
             gameOverPanel.SetActive(true);
             highScoreTxt.text = "HighScore = " + (int)maxPosY;
             maxDecibelTxt.text = "Loudest scream = " + (int)maxDbValue + " dB";
@@ -136,9 +137,12 @@ public class MicInputScript : MonoBehaviour
 
     void CheckGameOver()
     {
+        //Get the lowest and highest y position of the viewport
         camera2DMinY = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera2D>()._minY;
+        //camera2DMaxY = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera2D>()._maxY;
 
-        if (posY < camera2DMinY && camera2DMinY > 0)
+        //GameOver if player isn't visible anymore
+        if (posY < camera2DMinY)
         {
             gameOver = true;
         }
