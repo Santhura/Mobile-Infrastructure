@@ -26,7 +26,9 @@ public class ButtonScript : MonoBehaviour
     //Submit score
     public void SubmitScore()
     {
-        playerName = inputField.text;
+        //Get the needed data for the backend 
+        //Also EscapeURL at playerName to make sure the user's input is url friendly
+        playerName = WWW.EscapeURL(inputField.text);
         maxDbValue = (int)GameObject.FindGameObjectWithTag("Player").GetComponent<MicInputScript>().maxDbValue;
         maxPosY = (int)GameObject.FindGameObjectWithTag("Player").GetComponent<MicInputScript>().maxPosY;
         
@@ -51,16 +53,13 @@ public class ButtonScript : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Post data from a player on the backend
-    /// </summary>
-    /// <returns></returns>
+    // Post data from a player to the backend
     IEnumerator PostScore(int maxDbValue, int maxPosY, int playerId, string playerName)
     {
-        //Make the xmlString; Also EscapeUrl to make sure the input is url-friendly
+        //Make the xmlString that's going to be posted to the backend
         string xmlString = "<" + data + "><" + decibel + ">" + maxDbValue + "</" + decibel +
                 "><" + highScore + ">" + maxPosY + "</" + highScore + "><" + userId +
-                ">" + playerId + "</" + userId + "><" + username + ">" + WWW.EscapeURL(playerName) + "</" + username + "></" + data + ">";
+                ">" + playerId + "</" + userId + "><" + username + ">" + playerName + "</" + username + "></" + data + ">";
 
         byte[] xmlBytes = System.Text.Encoding.UTF8.GetBytes(xmlString);
 

@@ -5,32 +5,39 @@ using UnityEngine.UI;
 
 public class MicInputScript : MonoBehaviour
 {
+    //CONSTANTS
+    private const int SAMPLECOUNT = 1024;       //Sample Count
+    private const int FREQUENCY = 48000;        //Frequency (Hz)
+    private const float REFVALUE = 0.02f;       //RMS value for 0 dB
 
-    private AudioSource audio;              //AudioSource to listen to
-    private float posY;                     //Get current y pos and max y pos
-    public float maxPosY;                   //Get the max Y pos recorded in-game (highscore)
-    private float[] samples;                //Float array to collect audio samples
-    private List<float> dbValues;           //Float list to store decibel values
-    private const int SAMPLECOUNT = 1024;   //Sample Count
-    private const int FREQUENCY = 48000;    //Frequency (Hz)
-    private bool isPlaying;                 //Check if mic is listening
-    private const float REFVALUE = 0.02f;   //RMS value for 0 dB.
-    private float dbValue;                  //One decibel value
-    public float maxDbValue;                //Get max decibel value recorded in-game
-    private float rmsValue;                 //Volume in RMS
-    public Text resultDisplay;              //TextView for displaying amount of decibel
-    public Text blowDisplay;                //TextView for displaying whether the user is blowing or not
-    public Text highScoreTxt;               //TextView for displaying the highscore (at gameOver)
-    public Text maxDecibelTxt;              //TextView for displaying the max decibel value (at gameOver)
-    public GameObject gameOverPanel;        //Panel for when you are game over
-    private bool gameOver;                  //Boolean which checks if the player is gameover or not
-    public float forcePower = 500;          //Force power to make the sphere move (when blowing)
-    private float camera2DMinY, camera2DMaxY;             //Lowest/highest y position of the camera
+    //PUBLIC VARIABLES
+    public Text resultDisplay;                  //TextView for displaying amount of decibel
+    public Text blowDisplay;                    //TextView for displaying whether the user is blowing or not
+    public Text highScoreTxt;                   //TextView for displaying the highscore (at gameOver)
+    public Text maxDecibelTxt;                  //TextView for displaying the max decibel value (at gameOver)
+    public GameObject gameOverPanel;            //UI panel for the gameOver screen
+    public float maxPosY;                       //Get the player's max Y pos recorded in-game (highscore)
+    public float maxDbValue;                    //Get max decibel value recorded in-game
+    public float forcePower = 500;              //Force power to make the player move (when making sounds)
+
+    //PRIVATE VARIABLES
+    private AudioSource audio;                  //AudioSource to listen to
+    private float posY;                         //Get player's current y pos and max y pos
+    private float camera2DMinY, camera2DMaxY;   //Lowest/highest y position of the camera
+    private float dbValue;                      //One decibel value
+    private float rmsValue;                     //Volume in RMS
+    private List<float> dbValues;               //Float list to store decibel values
+    private float[] samples;                    //Float array to collect audio samples 
+    private bool gameOver;                      //Boolean which checks if the player is gameover or not
+    private bool isPlaying;
+   
 
     // Use this for initialization
     void Start()
     {
+        Time.timeScale = 1;
         gameOver = false;
+        isPlaying = false;
         maxPosY = 0;
         maxDbValue = 0;
         samples = new float[SAMPLECOUNT];
@@ -86,9 +93,6 @@ public class MicInputScript : MonoBehaviour
             dbValue = 0;
         }
 
-        //Set text to display the decibel amount
-        //resultDisplay.text = "Decibel amount = " + dbValue.ToString("F1") + " dB";
-
         //Blow up/Shrink balloon (sphere in editor)
         if (dbValue > 0)
         {
@@ -105,13 +109,17 @@ public class MicInputScript : MonoBehaviour
 
     void StartMicListener()
     {
+        Debug.Log("Hallo");
         //Start listening with the built-in microphone
         audio.clip = Microphone.Start("Built-in Microphone", true, 10, FREQUENCY);
         audio.loop = true;
         audio.volume = 0.2f;
 
-        while (!(Microphone.GetPosition("Built-in-Microphone") > 0)) { } // Wait until the recording has started
-        audio.Play(); // Play the audio source!
+        // Wait until the recording has started
+        while (!(Microphone.GetPosition("Built-in-Microphone") > 0)) { } 
+
+        // Play the audio source!
+        audio.Play(); 
         isPlaying = true;
     }
 
@@ -145,6 +153,7 @@ public class MicInputScript : MonoBehaviour
         if (posY < camera2DMinY)
         {
             gameOver = true;
+            audio.Stop();
         }
     }
 }

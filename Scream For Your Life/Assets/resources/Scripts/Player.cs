@@ -36,10 +36,12 @@ public class Player : MonoBehaviour {
         _rb = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
     }
+
+    //Every fixed framerate frame
     void FixedUpdate()
     {
-        _rb.AddForce(new Vector2(Input.acceleration.x * speed, Input.acceleration.y * speed));
-       // transform.Translate(Input.acceleration.x, Input.acceleration.y, 0);
+        //Add force to player based on accelerometer input
+        _rb.AddForce(new Vector2(Input.acceleration.x * speed, 0));
     }
 
 
