@@ -34,19 +34,17 @@ public class XMLParsing : MonoBehaviour
         {
             text = node.SelectSingleNode("highscore").InnerText;
             text_name = node.SelectSingleNode("username").InnerText;
-            Debug.Log(text);
             arrayData.Add(text);
             arrayNames.Add(text_name);
             
         }
 
         //Sort arrays (highest score first)
+        arrayData.Sort();
         arrayData.Reverse();
-        arrayData.RemoveAt(0);
-        arrayData.RemoveAt(0);
+
+        arrayNames.Sort();
         arrayNames.Reverse();
-        arrayNames.RemoveAt(0);
-        arrayNames.RemoveAt(0);
 
         //Display arrays in highscore list
         for (int i = 0; i < arrayData.Count; i++)
@@ -55,14 +53,18 @@ public class XMLParsing : MonoBehaviour
             UI_Text.transform.SetParent(GameObject.FindWithTag("ViewPort").transform);
             UI_Text.transform.localScale = new Vector3(1, 1, 1);
 
-            UI_Text.transform.position = new Vector3(GameObject.FindWithTag("ViewPort").transform.position.x + 3, (GameObject.FindWithTag("ViewPort").transform.position.y - 2) - (i - 1), GameObject.FindWithTag("ViewPort").transform.position.z);
+            UI_Text.transform.position = new Vector3(GameObject.FindWithTag("ViewPort").transform.position.x + 3, 
+                                                    (GameObject.FindWithTag("ViewPort").transform.position.y - 2) - (i - 1), 
+                                                    GameObject.FindWithTag("ViewPort").transform.position.z);
             UI_Text.text = arrayData[i];
 
             Text UI_Text_Name = Instantiate(Resources.Load("Prefabs/UI_Text", typeof(Text))) as Text;
             UI_Text_Name.transform.SetParent(GameObject.FindWithTag("ViewPort").transform);
             UI_Text_Name.transform.localScale = new Vector3(1, 1, 1);
 
-            UI_Text_Name.transform.position = new Vector3(GameObject.FindWithTag("ViewPort").transform.position.x + 1, (GameObject.FindWithTag("ViewPort").transform.position.y -2) - (i - 1), GameObject.FindWithTag("ViewPort").transform.position.z);
+            UI_Text_Name.transform.position = new Vector3(GameObject.FindWithTag("ViewPort").transform.position.x + 1, 
+                                                         (GameObject.FindWithTag("ViewPort").transform.position.y -2) - (i - 1), 
+                                                          GameObject.FindWithTag("ViewPort").transform.position.z);
             UI_Text_Name.text = arrayNames[i];
         }
     }
