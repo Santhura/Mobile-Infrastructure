@@ -50,7 +50,9 @@ public class PlatformSpawnScript : MonoBehaviour {
         if (platform != null)
         {
             platform.transform.Translate(Vector2.down * speed* Time.deltaTime);
-            
+
+            Physics2D.IgnoreCollision(platform.GetComponent<BoxCollider2D>(), GameObject.Find("Box col top").GetComponent<BoxCollider2D>());
+
         }
 	}
 }
